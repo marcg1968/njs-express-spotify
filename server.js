@@ -44,7 +44,7 @@ app.get('/auth/login', (req, res) => {
 
     const scope = 'streaming user-read-email user-read-private'
     const state = generateRandomString(16)
-    const SPOTIFY_REDIRECT_URI = `${req.headers.host}/auth/callback`
+    const SPOTIFY_REDIRECT_URI = `https://${req.headers.host}/auth/callback`
 
     /* record http referrer for state */
     cache.set(state, req.headers.referer)
