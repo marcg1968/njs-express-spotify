@@ -6,8 +6,12 @@ const express = require('express')
 const request = require('request')
 const dotenv = require('dotenv')
 const cors = require('cors')
+const Cache = require('node-cache')
 
 const port = 5000
+const minsTTL = 10
+
+const cache = new Cache({ stdTTL: 60 }) /* state => http_ref */
 
 global.access_token = ''
 
@@ -20,7 +24,7 @@ const {
     SPOTIFY_CLIENT_SECRET,
 } = process.env
 // const SPOTIFY_REDIRECT_URI = 'http://localhost:3000/auth/callback'
-const SPOTIFY_REDIRECT_URI = 'https://spotifyauth-37o5.onrender.com/auth/callback'
+// const SPOTIFY_REDIRECT_URI = 'https://spotifyauth-37o5.onrender.com/auth/callback'
 
 const generateRandomString = function (length) {
     let text = ''
@@ -40,6 +44,11 @@ app.get('/auth/login', (req, res) => {
 
     const scope = 'streaming user-read-email user-read-private'
     const state = generateRandomString(16)
+    const SPOTIFY_REDIRECT_URI = `${request.headers.host}/auth/callback`
+
+    /* record http referrer for state */
+    cache.set(state, request.headers.referer)
+
     const auth_query_parameters = new URLSearchParams({
         response_type: 'code',
         client_id: SPOTIFY_CLIENT_ID,
@@ -54,6 +63,16 @@ app.get('/auth/login', (req, res) => {
 app.get('/auth/callback', (req, res) => {
 
     const code = req.query.code
+    const state = req.query.state
+
+    let referer = 'https://spotify.soar-corowa.com' /* hard-coded default */
+    try {
+        referer = cache.has(state) ? cache.get(state) : referer
+    }
+    catch (err) {
+        
+    }
+
     const authOptions = {
         url: 'https://accounts.spotify.com/api/token',
         form: {
@@ -71,7 +90,8 @@ app.get('/auth/callback', (req, res) => {
         if (!error && response.statusCode === 200) {
             access_token = body.access_token
             // res.redirect('/') /* only works if server and react app running in same instance */
-            res.redirect('https://spotify.soar-corowa.com')
+            // res.redirect('https://spotify.soar-corowa.com')
+            res.redirect(referer)
         }
     })
 })
