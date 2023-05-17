@@ -1,8 +1,12 @@
 // server.js
+// http://spotify.soar-corowa.com:5000/auth/token/
+// http://spotify.soar-corowa.com:5000/auth/token
 
 const express = require('express')
 const request = require('request')
 const dotenv = require('dotenv')
+const cors = require('cors')
+
 const port = 5000
 
 global.access_token = ''
@@ -29,13 +33,14 @@ const generateRandomString = function (length) {
 if (!(SPOTIFY_CLIENT_ID && SPOTIFY_CLIENT_SECRET)) process.exit()
 
 const app = express()
+app.use(cors()) /* enable CORS for all requests */
 
 app.get('/auth/login', (req, res) => {
 
-    const scope = "streaming user-read-email user-read-private"
+    const scope = 'streaming user-read-email user-read-private'
     const state = generateRandomString(16)
     const auth_query_parameters = new URLSearchParams({
-        response_type: "code",
+        response_type: 'code',
         client_id: SPOTIFY_CLIENT_ID,
         scope: scope,
         redirect_uri: SPOTIFY_REDIRECT_URI,
@@ -70,6 +75,10 @@ app.get('/auth/callback', (req, res) => {
 })
 
 app.get('/auth/token', (req, res) => {
+    res.json({ access_token: access_token })
+})
+
+app.get('/auth/token/:rest', (req, res) => {
     res.json({ access_token: access_token })
 })
 
