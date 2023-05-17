@@ -1,6 +1,6 @@
 // server.js
 // http://spotify.soar-corowa.com:5000/auth/token/
-// http://spotify.soar-corowa.com:5000/auth/token
+// https://spotifyauth-37o5.onrender.com
 
 const express = require('express')
 const request = require('request')
@@ -19,7 +19,8 @@ const {
     SPOTIFY_CLIENT_ID,
     SPOTIFY_CLIENT_SECRET,
 } = process.env
-const SPOTIFY_REDIRECT_URI = 'http://localhost:3000/auth/callback'
+// const SPOTIFY_REDIRECT_URI = 'http://localhost:3000/auth/callback'
+const SPOTIFY_REDIRECT_URI = 'https://spotifyauth-37o5.onrender.com/auth/callback'
 
 const generateRandomString = function (length) {
     let text = ''
