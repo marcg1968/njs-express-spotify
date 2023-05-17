@@ -70,7 +70,8 @@ app.get('/auth/callback', (req, res) => {
     request.post(authOptions, function (error, response, body) {
         if (!error && response.statusCode === 200) {
             access_token = body.access_token
-            res.redirect('/')
+            // res.redirect('/') /* only works if server and react app running in same instance */
+            res.redirect('https://spotify.soar-corowa.com')
         }
     })
 })
