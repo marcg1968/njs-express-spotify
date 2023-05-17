@@ -44,10 +44,10 @@ app.get('/auth/login', (req, res) => {
 
     const scope = 'streaming user-read-email user-read-private'
     const state = generateRandomString(16)
-    const SPOTIFY_REDIRECT_URI = `${request.headers.host}/auth/callback`
+    const SPOTIFY_REDIRECT_URI = `${req.headers.host}/auth/callback`
 
     /* record http referrer for state */
-    cache.set(state, request.headers.referer)
+    cache.set(state, req.headers.referer)
 
     const auth_query_parameters = new URLSearchParams({
         response_type: 'code',
@@ -69,9 +69,7 @@ app.get('/auth/callback', (req, res) => {
     try {
         referer = cache.has(state) ? cache.get(state) : referer
     }
-    catch (err) {
-        
-    }
+    catch (err) {}
 
     const authOptions = {
         url: 'https://accounts.spotify.com/api/token',
