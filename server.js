@@ -64,6 +64,7 @@ app.get('/auth/callback', (req, res) => {
 
     const code = req.query.code
     const state = req.query.state
+    const SPOTIFY_REDIRECT_URI = `https://${req.headers.host}/auth/callback`
 
     let referer = 'https://spotify.soar-corowa.com' /* hard-coded default */
     try {
