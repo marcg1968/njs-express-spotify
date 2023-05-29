@@ -58,14 +58,17 @@ app.get('/auth/login', (req, res) => {
         redirect_uri: SPOTIFY_REDIRECT_URI,
         state: state
     })
+    const loginUrl = `https://accounts.spotify.com/authorize/?${auth_query_parameters.toString()}`
+    console.log(60, 'loginUrl:', loginUrl)
 
-    res.redirect(`https://accounts.spotify.com/authorize/?${auth_query_parameters.toString()}`)
+    res.redirect(loginUrl)
 })
 
 app.get('/auth/callback', (req, res) => {
 
     const code = req.query.code
     const state = req.query.state
+    console.log(71, 'req.query:', { req_query: req.query })
     const SPOTIFY_REDIRECT_URI = `https://${req.headers.host}/auth/callback`
 
     let referer = 'https://spotify.soar-corowa.com' /* hard-coded default */
@@ -91,6 +94,7 @@ app.get('/auth/callback', (req, res) => {
         if (!error && response.statusCode === 200) {
             // access_token = body.access_token
 
+            console.log(97, { body })
             cache.set(b64, body.access_token)
 
             // res.redirect('/') /* only works if server and react app running in same instance */
