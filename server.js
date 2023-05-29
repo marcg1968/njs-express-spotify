@@ -28,7 +28,8 @@ const {
 
 if (!(SPOTIFY_CLIENT_ID && SPOTIFY_CLIENT_SECRET)) process.exit()
 const b64 = Buffer.from(SPOTIFY_CLIENT_ID + ':' + SPOTIFY_CLIENT_SECRET).toString('base64')
-const access_token_cached = cache.has(b64) ? cache.get(b64) : ''
+// const access_token_cached = cache.has(b64) ? cache.get(b64) : ''
+console.log(32, { cache_keys: cache.keys() })
 
 const generateRandomString = function (length) {
     let text = ''
@@ -41,6 +42,17 @@ const generateRandomString = function (length) {
 
 const app = express()
 app.use(cors()) /* enable CORS for all requests */
+
+/* middleware to capture IP address */
+let ipAddr
+app.use((req, res, next) => {
+    console.log(49, { headers: req.headers })
+    const forwarded = req.headers['x-forwarded-for']
+    ipAddr = forwarded ? forwarded.split(/, /)[0] : req.connection.remoteAddress
+    const r = ipAddr.match(/((\d{1,3}\.){3}\d{1,3})/)
+    ipAddr = r ? r[1] : ipAddr
+    next()
+})
 
 app.get('/auth/login', (req, res) => {
 
@@ -110,13 +122,13 @@ app.get('/auth/callback', (req, res) => {
 app.get('/auth/token', (req, res) => {
     const access_token_cached = cache.has(b64) ? cache.get(b64) : ''
     console.log(112, { access_token_cached })
-    res.json({ access_token: access_token_cached })
+    res.json({ access_token: access_token_cached, ip_address: ipAddr })
 })
 
 app.get('/auth/token/:rest', (req, res) => {
     const access_token_cached = cache.has(b64) ? cache.get(b64) : ''
     console.log(118, { access_token_cached })
-    res.json({ access_token: access_token_cached })
+    res.json({ access_token: access_token_cached, ip_address: ipAddr })
 })
 
 app.get('/me', (req, res) => {
