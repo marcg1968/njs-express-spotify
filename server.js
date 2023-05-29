@@ -11,9 +11,9 @@ const Cache = require('node-cache')
 const port = 5000
 const minsTTL = 10
 
-const cache = new Cache({ stdTTL: 60 }) /* state => http_ref */
+const cache = new Cache({ stdTTL: 59 }) /* state => http_ref */
 
-global.access_token = ''
+// global.access_token = ''
 
 dotenv.config()
 
@@ -26,6 +26,10 @@ const {
 // const SPOTIFY_REDIRECT_URI = 'http://localhost:3000/auth/callback'
 // const SPOTIFY_REDIRECT_URI = 'https://spotifyauth-37o5.onrender.com/auth/callback'
 
+if (!(SPOTIFY_CLIENT_ID && SPOTIFY_CLIENT_SECRET)) process.exit()
+const b64 = Buffer.from(SPOTIFY_CLIENT_ID + ':' + SPOTIFY_CLIENT_SECRET).toString('base64')
+const access_token = cache.has(b64) ? cache.get(b64) : ''
+
 const generateRandomString = function (length) {
     let text = ''
     const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
@@ -34,8 +38,6 @@ const generateRandomString = function (length) {
     }
     return text
 }
-
-if (!(SPOTIFY_CLIENT_ID && SPOTIFY_CLIENT_SECRET)) process.exit()
 
 const app = express()
 app.use(cors()) /* enable CORS for all requests */
@@ -80,14 +82,17 @@ app.get('/auth/callback', (req, res) => {
             grant_type: 'authorization_code'
         },
         headers: {
-            'Authorization': 'Basic ' + (Buffer.from(SPOTIFY_CLIENT_ID + ':' + SPOTIFY_CLIENT_SECRET).toString('base64')),
+            'Authorization': `Basic ${b64}`,
             'Content-Type': 'application/x-www-form-urlencoded'
         },
         json: true
     }
     request.post(authOptions, function (error, response, body) {
         if (!error && response.statusCode === 200) {
-            access_token = body.access_token
+            // access_token = body.access_token
+
+            cache.set(b64, body.access_token)
+
             // res.redirect('/') /* only works if server and react app running in same instance */
             // res.redirect('https://spotify.soar-corowa.com')
             res.redirect(referer)
@@ -101,6 +106,20 @@ app.get('/auth/token', (req, res) => {
 
 app.get('/auth/token/:rest', (req, res) => {
     res.json({ access_token: access_token })
+})
+
+app.get('/me', (req, res) => {
+    //res.json({ access_token: access_token })
+    if (!access_token) return res.json({boo: 'hoo!'})
+    const authOptions = {
+        url: 'https://api.spotify.com/v1/me',
+        headers: {
+            'Authorization': `Basic ${access_token}`,
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        json: true
+    }
+    // request.fet
 })
 
 app.listen(port, () => {
