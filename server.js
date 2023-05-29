@@ -28,7 +28,7 @@ const {
 
 if (!(SPOTIFY_CLIENT_ID && SPOTIFY_CLIENT_SECRET)) process.exit()
 const b64 = Buffer.from(SPOTIFY_CLIENT_ID + ':' + SPOTIFY_CLIENT_SECRET).toString('base64')
-const access_token = cache.has(b64) ? cache.get(b64) : ''
+const access_token_cached = cache.has(b64) ? cache.get(b64) : ''
 
 const generateRandomString = function (length) {
     let text = ''
@@ -95,7 +95,10 @@ app.get('/auth/callback', (req, res) => {
             // access_token = body.access_token
 
             console.log(97, { body })
-            cache.set(b64, body.access_token)
+            const {
+                access_token
+            } = body
+            cache.set(b64, access_token)
 
             // res.redirect('/') /* only works if server and react app running in same instance */
             // res.redirect('https://spotify.soar-corowa.com')
@@ -105,20 +108,26 @@ app.get('/auth/callback', (req, res) => {
 })
 
 app.get('/auth/token', (req, res) => {
-    res.json({ access_token: access_token })
+    const access_token_cached = cache.has(b64) ? cache.get(b64) : ''
+    console.log(112, { access_token_cached })
+    res.json({ access_token: access_token_cached })
 })
 
 app.get('/auth/token/:rest', (req, res) => {
-    res.json({ access_token: access_token })
+    const access_token_cached = cache.has(b64) ? cache.get(b64) : ''
+    console.log(118, { access_token_cached })
+    res.json({ access_token: access_token_cached })
 })
 
 app.get('/me', (req, res) => {
     //res.json({ access_token: access_token })
-    if (!access_token) return res.json({boo: 'hoo!'})
+    const access_token_cached = cache.has(b64) ? cache.get(b64) : ''
+    console.log(125, { access_token_cached })
+    if (!access_token_cached) return res.json({boo: 'hoo!'})
     const authOptions = {
         url: 'https://api.spotify.com/v1/me',
         headers: {
-            'Authorization': `Basic ${access_token}`,
+            'Authorization': `Basic ${access_token_cached}`,
             'Content-Type': 'application/x-www-form-urlencoded'
         },
         json: true
