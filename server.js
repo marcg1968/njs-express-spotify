@@ -148,7 +148,7 @@ app.get('/auth/refresh', (req, res) => {
         // response_type: 'code',
         client_id: SPOTIFY_CLIENT_ID,
         client_secret: SPOTIFY_CLIENT_SECRET,
-        grant_type: authorization_code,
+        grant_type: 'authorization_code',
         code,
         redirect_uri: SPOTIFY_REDIRECT_URI,
     })
