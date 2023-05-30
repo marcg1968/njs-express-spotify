@@ -78,7 +78,7 @@ app.get('/auth/login', (req, res) => {
 
 app.get('/auth/callback', (req, res) => {
 
-    // console.log(71, 'req.query:', { req_query: req.query })
+    console.log(71, 'req.query:', { req_query: req.query })
     // const code = req.query.code
     // const state = req.query.state
     const { code, state } = req.query
@@ -93,8 +93,8 @@ app.get('/auth/callback', (req, res) => {
     }
     catch (err) {}
 
-    /* add code to referrer */
-    referer = `${referer}?code=${code}`
+    // /* add code to referrer */
+    // referer = `${referer}?code=${code}`
 
     const authOptions = {
         url: 'https://accounts.spotify.com/api/token',
