@@ -60,8 +60,8 @@ app.get('/auth/login', (req, res) => {
     const state = generateRandomString(16)
     const SPOTIFY_REDIRECT_URI = `https://${req.headers.host}/auth/callback`
 
-    /* record http referrer for state */
-    cache.set(state, req.headers.referer)
+    // /* record http referrer for state */
+    // cache.set(state, req.headers.referer)
 
     const auth_query_parameters = new URLSearchParams({
         response_type: 'code',
@@ -88,10 +88,10 @@ app.get('/auth/callback', (req, res) => {
     const SPOTIFY_REDIRECT_URI = `https://${req.headers.host}/auth/callback`
 
     let referer = 'https://spotify.soar-corowa.com' /* hard-coded default */
-    try {
-        referer = cache.has(state) ? cache.get(state) : referer /* ?????? */
-    }
-    catch (err) {}
+    // try {
+        // referer = cache.has(state) ? cache.get(state) : referer /* ?????? */
+    // }
+    // catch (err) {}
 
     // /* add code to referrer */
     // referer = `${referer}?code=${code}`
@@ -132,7 +132,11 @@ app.get('/auth/token', (req, res) => {
     const access_token_cached  = cache.has(`${b64}_access`)  ? cache.get(`${b64}_access`)  : ''
     const refresh_token_cached = cache.has(`${b64}_refresh`) ? cache.get(`${b64}_refresh`) : ''
     console.log(112, { access_token_cached })
-    res.json({ access_token: access_token_cached, ip_address: ipAddr })
+    res.json({
+        access_token:   access_token_cached,
+        refresh_token:   refresh_token_cached,
+        ip_address:     ipAddr,
+    })
 })
 
 app.get('/auth/token/:rest', (req, res) => {
