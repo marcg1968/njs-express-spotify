@@ -138,6 +138,35 @@ app.get('/auth/token/:rest', (req, res) => {
     res.json({ access_token: access_token_cached, ip_address: ipAddr })
 })
 
+app.get('/auth/refresh', (req, res) => {
+    // curl -d client_id=$CLIENT_ID -d client_secret=$CLIENT_SECRET -d grant_type=authorization_code -d code=$CODE 
+    // -d redirect_uri=$REDIRECT_URI https://accounts.spotify.com/api/token
+
+    const code = req.query.code
+
+    const auth_query_parameters = new URLSearchParams({
+        // response_type: 'code',
+        client_id: SPOTIFY_CLIENT_ID,
+        client_secret: SPOTIFY_CLIENT_SECRET,
+        grant_type: authorization_code,
+        code,
+        redirect_uri: SPOTIFY_REDIRECT_URI,
+    })
+    let referer = 'https://spotify.soar-corowa.com' /* hard-coded default */
+    request.post(authOptions, (error, response, body) => {
+        if (!error && response.statusCode === 200) {
+            console.log(157, { body })
+            const {
+                access_token,
+                refresh_token,
+            } = body
+            cache.set(`${b64}_access`, access_token)
+            cache.set(`${b64}_refresh`, refresh_token)
+            res.redirect(referer)
+        }
+    })
+})
+
 app.get('/me', (req, res) => {
     //res.json({ access_token: access_token })
     const access_token_cached  = cache.has(`${b64}_access`)  ? cache.get(`${b64}_access`)  : ''
