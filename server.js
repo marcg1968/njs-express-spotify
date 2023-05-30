@@ -46,7 +46,7 @@ app.use(cors()) /* enable CORS for all requests */
 /* middleware to capture IP address */
 let ipAddr
 app.use((req, res, next) => {
-    console.log(49, { headers: req.headers })
+    // console.log(49, { headers: req.headers })
     const forwarded = req.headers['x-forwarded-for']
     ipAddr = forwarded ? forwarded.split(/, /)[0] : req.connection.remoteAddress
     const r = ipAddr.match(/((\d{1,3}\.){3}\d{1,3})/)
@@ -80,7 +80,7 @@ app.get('/auth/callback', (req, res) => {
 
     const code = req.query.code
     const state = req.query.state
-    console.log(71, 'req.query:', { req_query: req.query })
+    // console.log(71, 'req.query:', { req_query: req.query })
     const SPOTIFY_REDIRECT_URI = `https://${req.headers.host}/auth/callback`
 
     let referer = 'https://spotify.soar-corowa.com' /* hard-coded default */
@@ -114,8 +114,8 @@ app.get('/auth/callback', (req, res) => {
                 access_token,
                 refresh_token,
             } = body
-            cache.set(b64_access, access_token)
-            cache.set(b64_refresh, refresh_token)
+            cache.set(`${b64}_access`, access_token)
+            cache.set(`${b64}_refresh`, refresh_token)
 
             // res.redirect('/') /* only works if server and react app running in same instance */
             // res.redirect('https://spotify.soar-corowa.com')
