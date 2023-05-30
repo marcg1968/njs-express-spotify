@@ -117,9 +117,11 @@ app.get('/auth/callback', (req, res) => {
             const {
                 access_token,
                 refresh_token,
+                expires_in,
             } = body
             cache.set(`${b64}_access`, access_token)
             cache.set(`${b64}_refresh`, refresh_token)
+            cache.set(`${b64}_expiry`, expires_in)
 
             // res.redirect('/') /* only works if server and react app running in same instance */
             // res.redirect('https://spotify.soar-corowa.com')
@@ -128,13 +130,33 @@ app.get('/auth/callback', (req, res) => {
     })
 })
 
+const supply_tokens = (req, res) => {
+    const access_token_cached  = cache.has(`${b64}_access`)  ? cache.get(`${b64}_access`)  : ''
+    const refresh_token_cached = cache.has(`${b64}_refresh`) ? cache.get(`${b64}_refresh`) : ''
+    const expires_in_cached    = cache.has(`${b64}_expiry`)  ? cache.get(`${b64}_expiry`)  : ''
+    console.log(137, { access_token_cached })
+    res.json({
+        access_token:   access_token_cached,
+        refresh_token:  refresh_token_cached,
+        expires_in:     expires_in_cached,
+        ip_address:     ipAddr,
+    })
+}
+
+const router = require('express').Router()
+router.get('/auth/token', supply_tokens)
+router.get('/auth/token/:rest', supply_tokens)
+
+/*
 app.get('/auth/token', (req, res) => {
     const access_token_cached  = cache.has(`${b64}_access`)  ? cache.get(`${b64}_access`)  : ''
     const refresh_token_cached = cache.has(`${b64}_refresh`) ? cache.get(`${b64}_refresh`) : ''
+    const expires_in_cached    = cache.has(`${b64}_expiry`)  ? cache.get(`${b64}_expiry`)  : ''
     console.log(112, { access_token_cached })
     res.json({
         access_token:   access_token_cached,
-        refresh_token:   refresh_token_cached,
+        refresh_token:  refresh_token_cached,
+        expires_in:     expires_in_cached,
         ip_address:     ipAddr,
     })
 })
@@ -142,9 +164,11 @@ app.get('/auth/token', (req, res) => {
 app.get('/auth/token/:rest', (req, res) => {
     const access_token_cached  = cache.has(`${b64}_access`)  ? cache.get(`${b64}_access`)  : ''
     const refresh_token_cached = cache.has(`${b64}_refresh`) ? cache.get(`${b64}_refresh`) : ''
+    const expires_in_cached    = cache.has(`${b64}_expiry`)  ? cache.get(`${b64}_expiry`)  : ''
     console.log(118, { access_token_cached })
     res.json({ access_token: access_token_cached, ip_address: ipAddr })
 })
+*/
 
 app.get('/auth/refresh', (req, res) => {
     const refresh_token = req.query.refresh_token
