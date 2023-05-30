@@ -108,9 +108,11 @@ app.get('/auth/callback', (req, res) => {
 
             console.log(97, { body })
             const {
-                access_token
+                access_token,
+                refresh_token,
             } = body
-            cache.set(b64, access_token)
+            cache.set(b64_access, access_token)
+            cache.set(b64_refresh, refresh_token)
 
             // res.redirect('/') /* only works if server and react app running in same instance */
             // res.redirect('https://spotify.soar-corowa.com')
@@ -120,21 +122,24 @@ app.get('/auth/callback', (req, res) => {
 })
 
 app.get('/auth/token', (req, res) => {
-    const access_token_cached = cache.has(b64) ? cache.get(b64) : ''
+    const access_token_cached  = cache.has(b64_access)  ? cache.get(b64_access)  : ''
+    const refresh_token_cached = cache.has(b64_refresh) ? cache.get(b64_refresh) : ''
     console.log(112, { access_token_cached })
     res.json({ access_token: access_token_cached, ip_address: ipAddr })
 })
 
 app.get('/auth/token/:rest', (req, res) => {
-    const access_token_cached = cache.has(b64) ? cache.get(b64) : ''
+    const access_token_cached  = cache.has(b64_access)  ? cache.get(b64_access)  : ''
+    const refresh_token_cached = cache.has(b64_refresh) ? cache.get(b64_refresh) : ''
     console.log(118, { access_token_cached })
     res.json({ access_token: access_token_cached, ip_address: ipAddr })
 })
 
 app.get('/me', (req, res) => {
     //res.json({ access_token: access_token })
-    const access_token_cached = cache.has(b64) ? cache.get(b64) : ''
-    console.log(125, { access_token_cached })
+    const access_token_cached  = cache.has(b64_access)  ? cache.get(b64_access)  : ''
+    const refresh_token_cached = cache.has(b64_refresh) ? cache.get(b64_refresh) : ''
+    console.log(125, { access_token_cached, refresh_token_cached })
     if (!access_token_cached) return res.json({boo: 'hoo!'})
     const authOptions = {
         url: 'https://api.spotify.com/v1/me',
