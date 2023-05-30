@@ -85,9 +85,12 @@ app.get('/auth/callback', (req, res) => {
 
     let referer = 'https://spotify.soar-corowa.com' /* hard-coded default */
     try {
-        referer = cache.has(state) ? cache.get(state) : referer
+        referer = cache.has(state) ? cache.get(state) : referer /* ?????? */
     }
     catch (err) {}
+
+    /* add code to referrer */
+    referer = `${referer}?code=${code}`
 
     const authOptions = {
         url: 'https://accounts.spotify.com/api/token',
