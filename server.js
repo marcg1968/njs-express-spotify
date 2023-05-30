@@ -105,7 +105,7 @@ app.get('/auth/callback', (req, res) => {
         },
         json: true
     }
-    request.post(authOptions, function (error, response, body) {
+    request.post(authOptions, (error, response, body) => {
         if (!error && response.statusCode === 200) {
             // access_token = body.access_token
 
@@ -139,30 +139,25 @@ app.get('/auth/token/:rest', (req, res) => {
 })
 
 app.get('/auth/refresh', (req, res) => {
-    // curl -d client_id=$CLIENT_ID -d client_secret=$CLIENT_SECRET -d grant_type=authorization_code -d code=$CODE 
-    // -d redirect_uri=$REDIRECT_URI https://accounts.spotify.com/api/token
-
-    const code = req.query.code
-
-    const auth_query_parameters = new URLSearchParams({
-        // response_type: 'code',
-        client_id: SPOTIFY_CLIENT_ID,
-        client_secret: SPOTIFY_CLIENT_SECRET,
-        grant_type: 'authorization_code',
-        code,
-        redirect_uri: SPOTIFY_REDIRECT_URI,
-    })
-    let referer = 'https://spotify.soar-corowa.com' /* hard-coded default */
+    const refresh_token = req.query.refresh_token
+    const authOptions = {
+        url: 'https://accounts.spotify.com/api/token',
+        headers: {
+            'Authorization': `Basic ${b64}`,
+        },
+        form: {
+          grant_type: 'refresh_token',
+          refresh_token: refresh_token
+        },
+        json: true
+    }
     request.post(authOptions, (error, response, body) => {
         if (!error && response.statusCode === 200) {
-            console.log(157, { body })
-            const {
-                access_token,
-                refresh_token,
-            } = body
+            access_token = body.access_token
             cache.set(`${b64}_access`, access_token)
-            cache.set(`${b64}_refresh`, refresh_token)
-            res.redirect(referer)
+            res.send({
+                'access_token': access_token
+            })
         }
     })
 })
