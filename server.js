@@ -177,6 +177,7 @@ app.get('/auth/token/:rest', (req, res) => {
 
 app.get('/auth/refresh', (req, res) => {
     const refresh_token = req.query.refresh_token
+    console.log(180, { refresh_token })
     const authOptions = {
         url: 'https://accounts.spotify.com/api/token',
         headers: {
