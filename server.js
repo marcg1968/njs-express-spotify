@@ -193,9 +193,9 @@ app.get('/auth/refresh/', (req, res) => {
             'Authorization': `Basic ${b64}`,
         },
         form: {
-          grant_type: 'refresh_token',
-        //   refresh_token: refresh_token,
-          refresh_token: refresh_token_cached,
+            grant_type: 'refresh_token',
+            // refresh_token: refresh_token,
+            refresh_token: refresh_token_cached,
         },
         json: true
     }
@@ -205,7 +205,8 @@ app.get('/auth/refresh/', (req, res) => {
             access_token = body.access_token
             cache.set(`${b64}_access`, access_token)
             res.send({
-                'access_token': access_token
+                // 'access_token': access_token,
+                ...{ body }
             })
         }
     })
