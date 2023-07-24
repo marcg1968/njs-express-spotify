@@ -175,11 +175,18 @@ app.get('/auth/token/:rest', (req, res) => {
     })
 })
 
-app.get('/auth/refresh', (req, res) => {
+/** 
+ * update the access token and reset refresh_token to prolong its cached lifespan
+ **/
+app.get('/auth/refresh/', (req, res) => {
+// app.get('/auth/refresh/:refresh_token', (req, res) => {
     // const refresh_token = req.query.refresh_token
-    // console.log(180, { refresh_token })
+    // console.log(183, { refresh_token })
+
     const refresh_token_cached = cache.has(`${b64}_refresh`) ? cache.get(`${b64}_refresh`) : ''
-    console.log(182, { refresh_token_cached })
+    console.log(187, { refresh_token_cached })
+    cache.set(`${b64}_refresh`, refresh_token) /* prolong its TTL */
+    
     const authOptions = {
         url: 'https://accounts.spotify.com/api/token',
         headers: {
