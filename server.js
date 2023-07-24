@@ -176,8 +176,10 @@ app.get('/auth/token/:rest', (req, res) => {
 })
 
 app.get('/auth/refresh', (req, res) => {
-    const refresh_token = req.query.refresh_token
-    console.log(180, { refresh_token })
+    // const refresh_token = req.query.refresh_token
+    // console.log(180, { refresh_token })
+    const refresh_token_cached = cache.has(`${b64}_refresh`) ? cache.get(`${b64}_refresh`) : ''
+    console.log(182, { refresh_token_cached })
     const authOptions = {
         url: 'https://accounts.spotify.com/api/token',
         headers: {
@@ -185,12 +187,14 @@ app.get('/auth/refresh', (req, res) => {
         },
         form: {
           grant_type: 'refresh_token',
-          refresh_token: refresh_token
+        //   refresh_token: refresh_token,
+          refresh_token: refresh_token_cached,
         },
         json: true
     }
     request.post(authOptions, (error, response, body) => {
         if (!error && response.statusCode === 200) {
+            console.log(197, { body })
             access_token = body.access_token
             cache.set(`${b64}_access`, access_token)
             res.send({
