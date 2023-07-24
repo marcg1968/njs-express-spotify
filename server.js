@@ -185,7 +185,7 @@ app.get('/auth/refresh/', (req, res) => {
 
     const refresh_token_cached = cache.has(`${b64}_refresh`) ? cache.get(`${b64}_refresh`) : ''
     console.log(187, { refresh_token_cached })
-    cache.set(`${b64}_refresh`, refresh_token) /* prolong its TTL */
+    if (refresh_token_cached) cache.set(`${b64}_refresh`, refresh_token_cached) /* prolong its TTL */
     
     const authOptions = {
         url: 'https://accounts.spotify.com/api/token',
