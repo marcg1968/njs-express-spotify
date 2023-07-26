@@ -77,8 +77,8 @@ app.get('/auth/login', (req, res) => {
     res.redirect(loginUrl)
 })
 
-// app.get('/auth/callback', (req, res) => {
-app.get('/auth/callback/:redirect_url', (req, res) => { // with optional param 'redirect_url'
+// app.get('/auth/callback/:redirect_url', (req, res) => { // with optional param 'redirect_url'
+app.get('/auth/callback', (req, res) => {
 
     console.log(82, 'req.query:', { req_query: req.query })
     // const code = req.query.code
@@ -89,15 +89,16 @@ app.get('/auth/callback/:redirect_url', (req, res) => { // with optional param '
 
     const SPOTIFY_REDIRECT_URI = `https://${req.headers.host}/auth/callback`
 
-    const { redirect_url = REFERRER } = req.params /* use hard coded default REFERRER unless pass in as param */
-    console.log(93, { redirect_url })
-    // try {
-        // referer = cache.has(state) ? cache.get(state) : referer /* ?????? */
-    // }
-    // catch (err) {}
+    // const { redirect_url = REFERRER } = req.params /* use hard coded default REFERRER unless pass in as param */
+    // console.log(93, { redirect_url })
+    let referer = REFERRER
+    // // try {
+    //     // referer = cache.has(state) ? cache.get(state) : referer /* ?????? */
+    // // }
+    // // catch (err) {}
 
-    // /* add code to referrer */
-    // referer = `${referer}?code=${code}`
+    // // /* add code to referrer */
+    // // referer = `${referer}?code=${code}`
 
     const authOptions = {
         url: 'https://accounts.spotify.com/api/token',
