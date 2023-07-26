@@ -10,6 +10,7 @@ const Cache = require('node-cache')
 
 const port = 5000
 const minsTTL = 10
+const REFERRER = 'https://spotify.soar-corowa.com' /* hard-coded default */
 
 const cache = new Cache({ stdTTL: 59 }) /* state => http_ref */
 
@@ -76,9 +77,10 @@ app.get('/auth/login', (req, res) => {
     res.redirect(loginUrl)
 })
 
-app.get('/auth/callback', (req, res) => {
+// app.get('/auth/callback', (req, res) => {
+app.get('/auth/callback/:redirect_url', (req, res) => { // with optional param 'redirect_url'
 
-    console.log(71, 'req.query:', { req_query: req.query })
+    console.log(82, 'req.query:', { req_query: req.query })
     // const code = req.query.code
     // const state = req.query.state
     const { code, state } = req.query
@@ -87,7 +89,8 @@ app.get('/auth/callback', (req, res) => {
 
     const SPOTIFY_REDIRECT_URI = `https://${req.headers.host}/auth/callback`
 
-    let referer = 'https://spotify.soar-corowa.com' /* hard-coded default */
+    const { redirect_url = REFERRER } = req.params /* use hard coded default REFERRER unless pass in as param */
+    console.log(93, { redirect_url })
     // try {
         // referer = cache.has(state) ? cache.get(state) : referer /* ?????? */
     // }
