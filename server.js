@@ -74,8 +74,10 @@ app.use((req, res, next) => {
 // })
 
 app.get('/auth/login/:variant', (req, res) => {
-    const { variant = '' } = req.params /* use hard coded default REFERRER unless pass in as param */
+    let { variant = 'PRODUCTION' } = req.params /* default to PRODUCTION */
+    variant = variant.replace(/[^0-9a-z_\-\+]/g, '')
     console.log(78, { variant })
+    variant = variant.toUpperCase()
     // _CLIENT_ID,
     // _CLIENT_SECRET,
     const CLIENT_ID     = variant ? process.env[`${variant}_CLIENT_ID`]     : null
