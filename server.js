@@ -74,9 +74,9 @@ app.use((req, res, next) => {
 // })
 
 app.get('/auth/login/:variant?', (req, res) => {
-
-    console.log(78, { 'req.params': req.params })
+    console.log(77, { 'req.params': req.params })
     let { variant } = req.params
+    console.log(79, { variant })
     variant = variant || 'PRODUCTION' /* default to PRODUCTION */
     variant = variant.replace(/[^0-9a-z_\-\+]/g, '')
     console.log(82, { variant })
