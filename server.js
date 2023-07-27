@@ -74,9 +74,10 @@ app.use((req, res, next) => {
 // })
 
 app.get('/auth/login/:variant?', (req, res) => {
+    console.log(77, { 'req.params': req.params })
     let { variant = 'PRODUCTION' } = req.params /* default to PRODUCTION */
     variant = variant.replace(/[^0-9a-z_\-\+]/g, '')
-    console.log(78, { variant })
+    console.log(80, { variant })
     variant = variant.toUpperCase()
     // _CLIENT_ID,
     // _CLIENT_SECRET,
