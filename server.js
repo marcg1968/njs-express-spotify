@@ -55,25 +55,44 @@ app.use((req, res, next) => {
     next()
 })
 
-app.get('/auth/login', (req, res) => {
+// app.get('/auth/login', (req, res) => {
+//     const scope = 'streaming user-read-email user-read-private'
+//     const state = generateRandomString(16)
+//     const SPOTIFY_REDIRECT_URI = `https://${req.headers.host}/auth/callback`
+//     // /* record http referrer for state */
+//     // cache.set(state, req.headers.referer)
+//     const auth_query_parameters = new URLSearchParams({
+//         response_type: 'code',
+//         client_id: SPOTIFY_CLIENT_ID,
+//         scope: scope,
+//         redirect_uri: SPOTIFY_REDIRECT_URI,
+//         state: state
+//     })
+//     const loginUrl = `https://accounts.spotify.com/authorize/?${auth_query_parameters.toString()}`
+//     console.log(72, 'loginUrl:', loginUrl)
+//     res.redirect(loginUrl)
+// })
 
+app.get('/auth/login/:variant', (req, res) => {
+    const { variant = '' } = req.params /* use hard coded default REFERRER unless pass in as param */
+    console.log(78, { variant })
+    // _CLIENT_ID,
+    // _CLIENT_SECRET,
+    const CLIENT_ID     = variant ? process.env[`${variant}_CLIENT_ID`]     : null
+    const CLIENT_SECRET = variant ? process.env[`${variant}_CLIENT_SECRET`] : null
+    console.log(83, { variant, CLIENT_ID, CLIENT_SECRET })
     const scope = 'streaming user-read-email user-read-private'
     const state = generateRandomString(16)
-    const SPOTIFY_REDIRECT_URI = `https://${req.headers.host}/auth/callback`
-
-    // /* record http referrer for state */
-    // cache.set(state, req.headers.referer)
-
+    const SPOTIFY_REDIRECT_URI = `https://${req.headers.host}/auth/callback/${variant}`
     const auth_query_parameters = new URLSearchParams({
         response_type: 'code',
-        client_id: SPOTIFY_CLIENT_ID,
+        client_id: CLIENT_ID,
         scope: scope,
         redirect_uri: SPOTIFY_REDIRECT_URI,
         state: state
     })
     const loginUrl = `https://accounts.spotify.com/authorize/?${auth_query_parameters.toString()}`
-    console.log(60, 'loginUrl:', loginUrl)
-
+    console.log(72, 'loginUrl:', loginUrl)
     res.redirect(loginUrl)
 })
 
