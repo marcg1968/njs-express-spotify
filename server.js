@@ -84,7 +84,7 @@ app.get('/auth/login/:variant?', (req, res) => {
     // _CLIENT_SECRET,
     const CLIENT_ID     = variant ? process.env[`${variant}_CLIENT_ID`]     : null
     const CLIENT_SECRET = variant ? process.env[`${variant}_CLIENT_SECRET`] : null
-    console.log(83, { variant, CLIENT_ID, CLIENT_SECRET })
+    console.log(87, { variant, CLIENT_ID, CLIENT_SECRET, 'process.env': process.env })
     const scope = 'streaming user-read-email user-read-private'
     const state = generateRandomString(16)
     const SPOTIFY_REDIRECT_URI = `https://${req.headers.host}/auth/callback/${variant}`
