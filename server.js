@@ -116,7 +116,7 @@ app.get('/auth/login/:variant?', (req, res) => {
 // app.get('/auth/callback', (req, res) => {
 app.get('/auth/callback/:variant?', (req, res) => {
     let { variant = 'PRODUCTION' } = req.params /* default to PRODUCTION */
-    variant = variant.replace(/[^0-9a-z_\-\+]/g, '')
+    variant = variant.replace(/[^0-9\w_\-\+]+/g, '')
     console.log(113, { variant })
     variant = variant.toUpperCase()
 
