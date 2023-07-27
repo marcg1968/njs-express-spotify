@@ -98,21 +98,36 @@ app.get('/auth/login/:variant', (req, res) => {
     res.redirect(loginUrl)
 })
 
-// app.get('/auth/callback/:redirect_url', (req, res) => { // with optional param 'redirect_url'
-app.get('/auth/callback', (req, res) => {
+/**
+ * Once authenticated on Spotify for the specific [variant]_CLIENT_ID
+ * the client is redirected here
+ * e.g. for _CLIENT_ID = 9cb0b05161124d58ab3313980489e215
+ *      Redirect URI is https://spotifyauth-37o5.onrender.com/auth/callback
+ * to request access_token and refresh_token
+ */
+// // app.get('/auth/callback/:redirect_url', (req, res) => { // with optional param 'redirect_url'
+// app.get('/auth/callback', (req, res) => {
+app.get('/auth/callback/:variant?', (req, res) => {
+    let { variant = 'PRODUCTION' } = req.params /* default to PRODUCTION */
+    variant = variant.replace(/[^0-9a-z_\-\+]/g, '')
+    console.log(113, { variant })
+    variant = variant.toUpperCase()
 
-    console.log(82, 'req.query:', { req_query: req.query })
+    console.log(116, 'req.query:', { req_query: req.query })
     // const code = req.query.code
     // const state = req.query.state
     const { code, state } = req.query
 
     if (!code || !state) return res.sendStatus(400)
 
-    const SPOTIFY_REDIRECT_URI = `https://${req.headers.host}/auth/callback`
+    // const SPOTIFY_REDIRECT_URI = `https://${req.headers.host}/auth/callback`
+    const SPOTIFY_REDIRECT_URI = `https://${req.headers.host}/auth/callback/${variant}`
 
     // const { redirect_url = REFERRER } = req.params /* use hard coded default REFERRER unless pass in as param */
     // console.log(93, { redirect_url })
-    let referer = REFERRER
+    // let referer = REFERRER
+    let referer = variant ? process.env[`${variant}_CLIENT_ID`]     : null
+
     // // try {
     //     // referer = cache.has(state) ? cache.get(state) : referer /* ?????? */
     // // }
@@ -138,7 +153,7 @@ app.get('/auth/callback', (req, res) => {
         if (!error && response.statusCode === 200) {
             // access_token = body.access_token
 
-            console.log(97, { body })
+            console.log(154, { body })
             const {
                 access_token,
                 refresh_token,
