@@ -117,10 +117,10 @@ app.get('/auth/login/:variant?', (req, res) => {
 app.get('/auth/callback/:variant?', (req, res) => {
     let { variant = 'PRODUCTION' } = req.params /* default to PRODUCTION */
     variant = variant.replace(/[^0-9\w_\-\+]+/g, '')
-    console.log(113, { variant })
+    console.log(120, { variant })
     variant = variant.toUpperCase()
 
-    console.log(116, 'req.query:', { req_query: req.query })
+    console.log(123, 'req.query:', { req_query: req.query })
     // const code = req.query.code
     // const state = req.query.state
     const { code, state } = req.query
@@ -133,7 +133,8 @@ app.get('/auth/callback/:variant?', (req, res) => {
     // const { redirect_url = REFERRER } = req.params /* use hard coded default REFERRER unless pass in as param */
     // console.log(93, { redirect_url })
     // let referer = REFERRER
-    let referer = variant ? process.env[`${variant}_CLIENT_ID`]     : null
+    let referer = variant ? process.env[`${variant}_CLIENT_ID`] : null
+    console.log(137, { referer })
 
     // // try {
     //     // referer = cache.has(state) ? cache.get(state) : referer /* ?????? */
