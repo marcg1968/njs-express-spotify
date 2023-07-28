@@ -154,10 +154,10 @@ app.get('/auth/callback/:variant?', (req, res) => {
         },
         json: true
     }
+    console.log(157, { authOptions })
     request.post(authOptions, (error, response, body) => {
         if (!error && response.statusCode === 200) {
             // access_token = body.access_token
-
             console.log(161, { body })
             const {
                 access_token,
