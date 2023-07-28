@@ -112,15 +112,14 @@ app.get('/auth/login/:variant?', (req, res) => {
  *      Redirect URI is https://spotifyauth-37o5.onrender.com/auth/callback
  * to request access_token and refresh_token
  */
-// // app.get('/auth/callback/:redirect_url', (req, res) => { // with optional param 'redirect_url'
 // app.get('/auth/callback', (req, res) => {
 app.get('/auth/callback/:variant?', (req, res) => {
     let { variant = 'PRODUCTION' } = req.params /* default to PRODUCTION */
     variant = variant.replace(/[^0-9\w_\-\+]+/g, '')
-    console.log(120, { variant })
+    console.log(119, { variant })
     variant = variant.toUpperCase()
 
-    console.log(123, 'req.query:', { req_query: req.query })
+    console.log(122, 'req.query:', { req_query: req.query })
     // const code = req.query.code
     // const state = req.query.state
     const { code, state } = req.query
@@ -130,11 +129,9 @@ app.get('/auth/callback/:variant?', (req, res) => {
     // const SPOTIFY_REDIRECT_URI = `https://${req.headers.host}/auth/callback`
     const SPOTIFY_REDIRECT_URI = `https://${req.headers.host}/auth/callback/${variant}`
 
-    // const { redirect_url = REFERRER } = req.params /* use hard coded default REFERRER unless pass in as param */
-    // console.log(93, { redirect_url })
     // let referer = REFERRER
-    let referer = variant ? process.env[`${variant}_CLIENT_ID`] : null
-    console.log(137, { referer })
+    let referer = variant ? process.env[`${variant}_REFERRER`] : null
+    console.log(134, { referer })
 
     // // try {
     //     // referer = cache.has(state) ? cache.get(state) : referer /* ?????? */
@@ -161,7 +158,7 @@ app.get('/auth/callback/:variant?', (req, res) => {
         if (!error && response.statusCode === 200) {
             // access_token = body.access_token
 
-            console.log(154, { body })
+            console.log(161, { body })
             const {
                 access_token,
                 refresh_token,
