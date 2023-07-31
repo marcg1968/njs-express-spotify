@@ -92,7 +92,8 @@ app.get('/auth/login/:variant?', (req, res) => {
     })
     const scope = 'streaming user-read-email user-read-private'
     const state = generateRandomString(16)
-    const SPOTIFY_REDIRECT_URI = `https://${req.headers.host}/auth/callback/${variant}`
+    // const SPOTIFY_REDIRECT_URI = `https://${req.headers.host}/auth/callback/${variant}`
+    const SPOTIFY_REDIRECT_URI = `https://${req.headers.host}/auth/callback/${variant}/?a=b`
     const auth_query_parameters = new URLSearchParams({
         response_type: 'code',
         client_id: CLIENT_ID,
@@ -101,7 +102,7 @@ app.get('/auth/login/:variant?', (req, res) => {
         state: state
     })
     const loginUrl = `https://accounts.spotify.com/authorize/?${auth_query_parameters.toString()}`
-    console.log(72, 'loginUrl:', loginUrl)
+    console.log(105, 'loginUrl:', loginUrl)
     res.redirect(loginUrl)
 })
 
